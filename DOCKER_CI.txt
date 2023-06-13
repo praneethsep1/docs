@@ -1,0 +1,30 @@
+name: CIname: CI
+on:
+  push:
+    branches:
+      - main
+env:
+  PATH_FORNTEND: ${{ env.PATH_FORNTEND }}
+  PATH_BACKEND: ${{ env.PATH_BACKEND }}
+  username: ${{ secrets.username }}
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build and Push Front-End Image
+      uses: docker/build-push-action@v2
+      with:
+        context: $PATH_FORNTEND
+        push: true
+        tags: $username/frontend:latest
+
+    - name: Build and Push Back-End Image
+      uses: docker/build-push-action@v2
+      with:
+        context: $PATH_BACKEND
+        push: true
+        tags: $username/backend:latest
