@@ -1,0 +1,29 @@
+CREATE PROCEDURE [dbo].[WeeklyAccountHeatmapSummaryEntity_Read_All]
+
+AS
+BEGIN
+    -- SET NOCOUNT ON added to prevent extra result sets from
+    -- interfering with SELECT statements.
+    SET NOCOUNT ON
+
+   
+  Select Id, Account, Dataset, Status, Type, Date, ReportId, PageId 
+  from (select ROW_NUMBER() OVER ( PARTITION BY Account, Dataset ORDER BY Date  desc) row_num, Dataset, WHS.Id, Account,Status,Date, WBR.Type, ReportId, PageId 
+  from WeeklyAccountHeatmapSummary WHS INNER JOIN WeeklyAccountHeatmapBiRedirection WBR on WHS.Account= WBR.AccountName and WHS.Type=WBR.Type )X 
+  where X.row_num=1;
+
+END  CREATE PROCEDURE [dbo].[WeeklyAccountHeatmapSummaryEntity_Read_All]
+
+AS
+BEGIN
+    -- SET NOCOUNT ON added to prevent extra result sets from
+    -- interfering with SELECT statements.
+    SET NOCOUNT ON
+
+   
+  Select Id, Account, Dataset, Status, Type, Date, ReportId, PageId 
+  from (select ROW_NUMBER() OVER ( PARTITION BY Account, Dataset ORDER BY Date  desc) row_num, Dataset, WHS.Id, Account,Status,Date, WBR.Type, ReportId, PageId 
+  from WeeklyAccountHeatmapSummary WHS INNER JOIN WeeklyAccountHeatmapBiRedirection WBR on WHS.Account= WBR.AccountName and WHS.Type=WBR.Type )X 
+  where X.row_num=1;
+
+END  

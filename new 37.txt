@@ -1,0 +1,69 @@
+name: Devlop
+on: [push]
+
+env:
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'CLIPService'
+  solution: 'CLIP.Services.sln'
+  AZURE_WEBAPP_NAME: your-app-name    # set this to the name of your Azure Web App
+  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+  DOTNET_VERSION: '2.2.402'           # set this to the .NET Core version to use
+  NUGET_VERSION: '4.4.1'              # set this to the NuGet version to use
+
+jobs:
+  build:
+    runs-on: windows-2019
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+		
+	  - name: SonarQube Scan 
+        uses: sonarsource/sonarqube-scan-action@ v1.9.1 
+        env: 
+              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+              SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Install NuGet
+        run: |
+          curl -o nuget.exe "https://dist.nuget.org/win-x86-commandline/v${{ env.NUGET_VERSION }}/nuget.exe"
+          echo "nuget.exe" >> $GITHUB_PATH
+      
+      - name: Restore NuGet packages
+        run: nuget restore ${{ env.solution }}
+      - name: Setup MSBuild path
+        uses: microsoft/setup-msbuild@v1.3.1
+        with: 
+          vs-version: 16.0  
+      - name: Build
+        run: |
+             dir
+             mkdir ${{ github.workspace }}/drop
+             mkdir ${{ github.workspace }}/drop/dacpac
+             msbuild ${{ env.solution }} /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="${{ github.workspace }}/WebApp.zip" /p:DeployIisAppPath="Default Web Site" /p:Platform="Any CPU" /p:Configuration="CLIPService" /t:Build
+             dir
+             cp ${{ github.workspace }}/WebApp.zip ${{ github.workspace }}/drop
+             cp ${{ github.workspace }}/CLIP.Service.deploy.cmd ${{ github.workspace }}/drop
+             cp ${{ github.workspace }}/CLIP.Service.deploy-readme.txt ${{ github.workspace }}/drop
+             cp ${{ github.workspace }}/CLIP.Service.Parameters.xml ${{ github.workspace }}/drop
+             cp ${{ github.workspace }}/CLIP.Service.SetParameters.xml ${{ github.workspace }}/drop
+             cp ${{ github.workspace }}/CLIP.Service.SourceManifest.xml ${{ github.workspace }}/drop
+             cp ${{ github.workspace }}/BrillioOne.Database/bin/Debug/BrillioOne.Database.dacpac ${{ github.workspace }}/drop/dacpac
+             cp ${{ github.workspace }}/Common.Database/bin/Debug/Common.Database.dacpac ${{ github.workspace }}/drop/dacpac
+             cd ${{ github.workspace }}/BrillioOne.Database/bin/Debug
+             dir
+             cd ${{ github.workspace }}/drop
+             dir
+             cd ${{ github.workspace }}/drop/dacpac
+             dir
+			  
+	 
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v2
+        with:
+          name: CLIP.Service
+          path: '${{ github.workspace }}/drop'

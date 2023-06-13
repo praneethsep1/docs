@@ -1,0 +1,55 @@
+name: capitalization.frontend
+
+on: 
+  push:
+      branches: 
+              [ main ]
+
+env:
+  CI: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3.3.0
+    
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3.6.0
+      with:
+        node-version: 16
+
+    - name: Install NPM dependencies 
+      run: npm ci
+
+    - name: Build
+      run: npm run build
+	  
+  deploy:
+    runs-on:
+	needs: build
+    steps:
+	-name:
+   
+    - name: 'Set up Cloud SDK'
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        version: '>= 363.0.0'
+        
+    - name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+    - name: print the credentials
+      run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}"
+
+    - name: Deploy to Google App Engine
+      run: |
+          gcloud app deploy
+    - name: get-the-app-engine-link
+      env:
+         name: ${{ inputs.environment }} 
+         url: ${{ steps.get-the-app-engine-link.outputs.webapp-url }}
+      run: |
+          gcloud app browse -s capitalization-ui

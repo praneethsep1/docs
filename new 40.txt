@@ -1,0 +1,46 @@
+      - name: Download SonarScanner
+        run: |
+         Invoke-WebRequest -Uri https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-{4.6.2}.zip -OutFile sonar-scanner.zip
+          Expand-Archive -Path sonar-scanner.zip -DestinationPath $Env:USERPROFILE\sonar-scanner
+          Remove-Item sonar-scanner.zip
+
+      - name: Set up SonarQube analysis properties
+        run: |
+          echo sonar.host.url=${{secrets.SONAR_HOST_URL}} >> $Env:USERPROFILE\sonar-scanner\conf\sonar-scanner.properties
+          echo sonar.login=${{secrets.SONAR_TOKEN}} >> $Env:USERPROFILE\sonar-scanner\conf\sonar-scanner.properties
+          echo sonar.projectKey="CLIPSTEST_GITHUB" >> $Env:USERPROFILE\sonar-scanner\conf\sonar-scanner.properties
+          echo sonar.projectName="CLIPSTEST_GITHUB" >> $Env:USERPROFILE\sonar-scanner\conf\sonar-scanner.properties
+          echo sonar.projectVersion=1.0 >> $Env:USERPROFILE\sonar-scanner\conf\sonar-scanner.properties
+
+      - name: Run SonarQube analysis
+        run: $Env:USERPROFILE\sonar-scanner\bin\sonar-scanner.bat
+		
+		
+		
+		
+------------------------------------------------------------------------------------------------------------------------------------------
+- name: Download SonarScanner
+  run: |
+    $url = "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.zip"
+    $output = "$Env:USERPROFILE\sonar-scanner.zip"
+    Invoke-WebRequest -Uri $url -OutFile $output
+
+- name: Extract SonarScanner
+  run: Expand-Archive -Path $Env:USERPROFILE\sonar-scanner.zip -DestinationPath $Env:USERPROFILE\sonar-scanner
+
+- name: Cleanup SonarScanner ZIP
+  run: Remove-Item $Env:USERPROFILE\sonar-scanner.zip
+  
+  -------------------------------------------------------------------------------------------------------------------------------------------
+ - name: Download SonarScanner
+  run: |
+    $url = "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.zip"
+    $output = "$Env:USERPROFILE\sonar-scanner.zip"
+    Invoke-WebRequest -Uri $url -OutFile $output
+
+- name: Extract SonarScanner
+  run: Expand-Archive -Path $Env:USERPROFILE\sonar-scanner.zip -DestinationPath $Env:USERPROFILE\sonar-scanner
+
+- name: Cleanup SonarScanner ZIP
+  run: Remove-Item $Env:USERPROFILE\sonar-scanner.zip
+

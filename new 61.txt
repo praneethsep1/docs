@@ -1,0 +1,37 @@
+copilot
+- using comments code snippets will be generated
+- code explanation will be done
+- best practice will be shown
+
+-------------------------------------------------------------------------------------------------
+
+copilot api is availabele (not sure how to use)
+- Use the copilot.suggest() function to get suggestions for any valid YAML code.
+- Use the copilot.complete() function to get suggestions for completing a single word or phrase.
+- Use the copilot.generate() function to generate new code based on your current selection.
+- Use the copilot.edit() function to edit existing code.
+
+--------------------------------------------------------------------------------------------------
+
+best practises
+- Bug Fixing
+- Code Optimization
+- Handling Edge Cases
+- Designing for Maintainability
+- Handling Dependencies and Integrations
+- Scaling and Performance
+- Security
+- Handling Asynchronous Operations
+- Testing
+- Documentation
+
+--------------------------------------------------------------------------------------------------------
+
+GitHub Copilot for Docs
+GitHub Copilot for PR(Technical Preview)
+GitHub Copilot Chat
+GitHub Copilot for CLI (Technical Preview)
+Explore all Previews (Be the first to try out GitHub’s new features)
+GitHub Next
+
+---------------------------------------------------------------------------------------------------------
